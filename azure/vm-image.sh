@@ -1,29 +1,34 @@
-# setup sudo
-apt update && apt install sudo
-adduser user
-usermod -aG sudo user
-su user
-cd ~
+#!/bin/bash
+# This script is used to build the symbol-bootstrap package.
 
-# setup nodejs
-sudo apt update && sudo apt install git curl -y
+# install nodejs
+sudo apt update
+sudo apt install git -y
 curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
-source ~/.profile
+source ~/.nvm/nvm.sh;
 nvm install v16
 
-# setup docker & docker compose
-sudo apt-get update && sudo apt-get install ca-certificates curl gnupg lsb-release -y
+# preinstall for docker
+sudo apt-get update
+sudo apt-get install ca-certificates curl gnupg lsb-release -y
 sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update && sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
+
+# install docker & docker-compose v1
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
-sudo usermod -aG docker ${USER}
-su - ${USER}
 
-# setup symbol-bootstrap
+# install symbol-bootstrap
 mkdir ~/symbol-bootstrap
-cd ~/symbol-bootstrap
 npm install -g symbol-bootstrap
-symbol-bootstrap wizard
+npm install -g npm-check-updates
+
+echo "-----------------------------------"
+echo "symbol-bootstrap install completed!"
+echo "next step:"
+echo "$> cd ~/symbol-bootstrap"
+echo "$> symbol-bootstrap wizard"
+exec $SHELL -l
